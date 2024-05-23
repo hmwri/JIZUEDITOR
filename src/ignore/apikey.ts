@@ -1,0 +1,1 @@
+export var OPENAI_API_KEY = "sk-proj-4xiFR8fVXR4P9KlEU4tLT3BlbkFJ1ox7V7SJBWQIQrzMX5p9"

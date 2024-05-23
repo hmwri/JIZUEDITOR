@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "module": "nodenext",
+    "target": "es5",
+    "allowJs": true,
+    "moduleResolution": "nodenext"
+  }
+}

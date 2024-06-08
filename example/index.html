@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +7,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="chat-container">
-    <div class="chat-header">
-        <h2>Chat</h2>
+
+    <div id="wrapper">
+        <div>
+            <div class="header">
+                <h2>JIZU EDITOR</h2>
+                <div class="title" >
+                    タイトル「<span class="title_name"> </span>」
+                </div>
+            </div>
+            <div id="editor">
+                <div id="editor_wrapper">
+                    <div id="story_units"></div>
+                    <div id="timeline">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-    <div id="">
-        <!-- Messages will be displayed here -->
-    </div>
-</div>
+
 <script src="../dist/bundle.js"></script>
 </body>
+
 </html>

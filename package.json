@@ -9,12 +9,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jquery": "^3.5.30",
+    "@types/p5": "^1.7.6",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "openai": "^4.47.1"
+    "jquery": "^3.7.1",
+    "jsonrepair": "^3.8.0",
+    "openai": "^4.47.1",
+    "p5": "^1.9.4"
   }
 }

@@ -18,12 +18,44 @@
             </div>
             <div id="editor">
                 <div id="editor_wrapper">
-                    <div id="story_units"></div>
-                    <div id="timeline">
+                    <div id="story_units">
+                        <div id="add_story_button_area">
+                        </div>
+                        <div id="inner_story_units">
+                            <div id="inner_story_units">
 
+                            </div>
+                        </div>
+                    </div>
+                    <div id="timeline">
+                        <div class="track_descriptions"></div>
                     </div>
                 </div>
+                <div id="envelope_manager">
+                    <h2>
+                        Envelope Manager
+                    </h2>
+                    既存のエンベロープ
+                    <div class="all_envelopes">
 
+                    </div>
+                    <div class="envelope_generator">
+                        キャラクター
+                        <br>
+                        <select id="chara_name">
+                        </select>
+                        <br>
+                        パラメーター
+                        <br>
+                        <input type="text" name="parameter"><br>
+                        尺度<br>
+                        -1(<input type="text" name="min_description">) ~ 1(<input type="text" name="max_description">)
+                        <br>
+                        <button class="generate_envelope">
+                            作成
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

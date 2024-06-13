@@ -14,24 +14,37 @@ body {
 }
 
 #timeline {
-
+    position: relative;
 
 }
 #editor_wrapper {
     width: 100%;
     overflow-x: scroll;
     white-space: nowrap;
+    overflow-y: visible;
 
 }
-
 #timeline canvas {
+    z-index: -1;
+
+}
+.track_descriptions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100px;
+    background-color: rgba(255,255,255,0.5);
 
 }
 #story_units {
     display: inline-block;
-    height: 200px
+    height: 200px;
+    position: relative;
+    padding: 10px;
 }
 .story_unit {
+    box-sizing: border-box;
     white-space: break-spaces;
     vertical-align: top;
     display: inline-block;
@@ -39,11 +52,70 @@ body {
     background-color: white;
     border: #000 1px solid;
     height: 100%;
+    overflow-y: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    padding: 5px;
 }
 #editor {
     width: 90vw;
 }
 
+
+#inner_story_units{
+    width: 100%;
+    height: 100%;
+}
+
+#add_story_button_area {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+
+    height: 100%;
+}
+
+#add_button{
+    position: absolute;
+}
+#add_button img{
+    width: 20px;
+    margin-left: -10px;
+    margin-top: -10px;
+    z-index: 3;
+}
+
+#add_story_buttons{
+    position: relative;
+}
+
 .title{
     padding: 20px;
+}
+
+/* スクロールバー全体のスタイル */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 12px;
+}
+
+/* スクロールバーのトラックのスタイル */
+::-webkit-scrollbar-track {
+    background: transparent; /* トラックの背景を透明にする */
+}
+
+/* スクロールバーのサムのスタイル */
+::-webkit-scrollbar-thumb {
+    background: #888; /* スクロールバーのサムの色を設定 */
+    border-radius: 10px;
+    border: 2px solid transparent; /* サムに余白を追加 */
+    background-clip: padding-box;
+    /* サムの角を丸める */
+}
+
+/* ホバー時のスクロールバーのサムのスタイル */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

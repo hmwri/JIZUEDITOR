@@ -2,6 +2,7 @@ import {Envelope} from "../editor/query/types";
 import p5 from "p5";
 import $ from "jquery";
 import {Point} from "./point";
+import {changeStory} from "../editor/query";
 
 export class Track {
     x : number
@@ -22,30 +23,35 @@ export class Track {
         this.envelope = envelope
         this.scene_width = $(".story_unit").width()
         this.color = color
-        for (let [i, v] of this.envelope.data.entries()) {
-            this.points.push(
-                new Point(i, v, this)
-            )
-        }
+        this.generatePoint()
+    }
+
+    regenerate() {
+        this.points = []
+        this.generatePoint()
     }
 
     draw(p : p5) {
+        this.width = $("#story_units").width()
+        p.noStroke()
         p.fill(this.color)
         p.rect(this.x, this.y, this.width, this.height)
         p.noFill()
 
-        p.stroke(0,0,0)
+        p.stroke(0,0,0, 150)
 
-        for(let i=0; i<= 5; i++) {
+        for(let i=0; i< 5; i++) {
             if(i == 2) {
-                p.strokeWeight(3)
+                p.stroke(0,0,0)
+                p.strokeWeight(2)
             }else{
+                p.stroke(0,0,0, 150)
                 p.strokeWeight(1)
             }
-            p.line(this.x , this.y+ i/10 * this.height, this.x + this.width, this.y+ i/10 * this.height)
+            p.line(this.x , this.y+ i/4 * this.height, this.x + this.width, this.y+ i/4 * this.height)
         }
-
-        p.stroke(255,10,10)
+        p.strokeWeight(3)
+        p.stroke(20,20,240)
 
         // ラインを描画
         p.beginShape();
@@ -53,6 +59,8 @@ export class Track {
             p.vertex(point.x, point.y);
         }
         p.endShape();
+
+        p.noStroke()
 
         // データポイントを描画
         for (const point of this.points) {
@@ -78,12 +86,20 @@ export class Track {
     }
 
     mouseReleased(p: p5) {
-        p.mouseReleased = () => {
             if (this.draggingPoint) {
                this.draggingPoint.beingDragged = false;
                this.draggingPoint.dragFinish();
                this.draggingPoint = null;
             }
-        };
+    }
+
+    generatePoint() {
+        for (let [i, v] of this.envelope.data.entries()) {
+            this.points.push(
+                new Point(i, v, this, (value, index) => {
+                    this.envelope.changeValue(index, value)
+                })
+            )
+        }
     }
 }

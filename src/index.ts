@@ -8,7 +8,9 @@ var editor : StoryEditor
 $(document).ready(async function() {
     let ui = new UIManager()
     editor = new StoryEditor(ui)
-    await editor.generate()
+    ui.editor = editor
+    ui.initialize()
+    await editor.generate(true)
     editor.generateDefaultEnvelopes()
 
     // var ts = await getTimeSeries(story)

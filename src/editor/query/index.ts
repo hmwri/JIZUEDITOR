@@ -83,30 +83,47 @@ export async function changeStory(story: Story , envelope: Envelope, index: numb
 export async function changeScenes(story: Story , envelopes: Envelope[]) {
     let story_str = generatePlainTextFromScenes(story.scenes)
 
+    console.log(envelopes[0].data)
+    console.log(envelopes[0].head_data)
 
     let envelope_str = generatePlainTextFromEnvelopes(envelopes)
     let head_envelope_str = generatePlainTextFromEnvelopes(envelopes, true)
 
     let changed_scene_numbers = []
     for(let i = 0; i < story.scenes.length; i++) {
+        let flag = false
         for(let env of envelopes) {
             if(env.isDiff(i)) {
-                changed_scene_numbers.push(i + 1)
+                flag  = true
             }
+        }
+        if(flag) {
+            changed_scene_numbers.push(i + 1)
         }
     }
 
 
+    let changed_scene_str = generatePlainTextFromSceneNumbers(changed_scene_numbers)
+
+
 
     let prompt = story_str + `
-以上の話について、各章におけるパラメータは以下となっている
+    あなたはプロの小説家です。
+以上の話について、各章におけるパラメータは以下となっている　なお，主体はパラメータの主を，属性はパラメータが何を意味するかを，尺度はパラメータの最小値と最大値(-1,1)が何を意味するかを説明している．
 ` +
-        envelope_str + "上記のパラメータを以下のように書き換えたい。\n変更後のパラメータ\n" + head_envelope_str +
-        `このとき、適切な変換となるように、各章のつながりを考えながら${generatePlainTextFromSceneNumbers(changed_scene_numbers)}を書き換えなさい。
-        なお、変更がないパラメータに影響を与えることはできるだけ避けなさい。また、書き換える前と書き換えた後で文章の長さは決して変えないこと` +
-        "返答は以下のような形で変えなさい" +
+         head_envelope_str + "上記のパラメータを以下のように書き換えたい。\n変更後のパラメータ\n" + envelope_str+
+        `このとき、適切な変換となるように、各章のつながりを考えながら${changed_scene_str}を書き換えなさい。つながっていれば内容をあなたなりの言葉で大きく変えてよい。
+        文量の目安は150文字とする
+        なお、パラメータ名を露骨に物語の中に組み込むことは避けなさい
+        なお、変更がないパラメータに影響を与えることはできるだけ避けなさい` +
+        `返答は${changed_scene_str}のみでよい` +
+        "また，章を書く前にパラメータの変更前と変更後でどのような流れの変更があるか，及びそれに対してそれぞれの章はどのようなプロットにするべきかの考察文をanalyzeフィールドに書きなさい．ただ，考察を露骨にストーリーに反映させないこと，また，つながりが自然になることを意識しなさい" +
+        "なお，ここの考察文においては必ず値の変更前と変更後の上下の情報だけでなく，値が範囲内でどの位置にあるのか（パラメータの尺度の情報）に注目すること" +
+        "返答は以下のような形で変えなさい（第一章と第五章のみを変える場合）" +
         JSON.stringify(
             {
+                analyzes: "<<パラメータの変更前と変更後の比較と変えるべき章に対する考察>>",
+
                 scenes: [
                     {
                         scene_number: 1,
@@ -123,7 +140,7 @@ export async function changeScenes(story: Story , envelopes: Envelope[]) {
         )
 
     console.log("from: changeScenes" , prompt)
-    return (await ask(prompt, [], true)).body
+    return JSON.parse((await ask(prompt, [], true)).body).scenes as Scene[]
 }
 
 
@@ -138,22 +155,25 @@ function generatePlainTextFromSceneNumbers(numbers: number[]) {
 
 
 function generatePlainTextFromEnvelopes(envelopes:Envelope[], head=false) {
-    const result: { [key: string]: { "パラメータ": string, "値": number }[] } = {};
+    const result: { [key: string]: { "主体": string, "属性":string, "尺度": string , "値": number }[] } = {};
 
-    envelopes.forEach((envelope, index) => {
-        let data = head ? envelope.head_data : envelope.data
-        const chapter = `第${index + 1}章`;
-        const parameter = `${envelope.info.character.name}の${envelope.info.name} ${envelope.info.min_description}(-1) ~ ${envelope.info.max_description}(1)`;
-
+    for(let i =0; i < envelopes[0].data.length; i++) {
+        const chapter = `第${i + 1}章`;
         if (!result[chapter]) {
             result[chapter] = [];
         }
+        envelopes.forEach((envelope, index) => {
+            let data = head ? envelope.head_data : envelope.data
+            const parameter = `${envelope.info.character.name}の${envelope.info.name} ${envelope.info.min_description}(-1) ~ ${envelope.info.max_description}(1)`;
 
-        result[chapter].push({
-            "パラメータ": parameter,
-            "値": data[index]
-        });
-    });
+            result[chapter].push({
+                "主体": envelope.info.character.name,
+                "属性" : envelope.info.name,
+                "尺度" : `${envelope.info.min_description}(-1) ~ ${envelope.info.max_description}(1)`,
+                "値": data[i]
+            });
+        })
+    }
 
     return JSON.stringify(result, null, 2);
 }

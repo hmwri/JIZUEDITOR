@@ -6,10 +6,12 @@ export interface Character {
     name: string;
 }
 
+const NOTSET:string = "NOTSET"
 export interface Scene {
     scene_number: number;
     scene_title: string;
     scene_body: string;
+
 }
 
 export class Story {
@@ -29,6 +31,7 @@ export class Envelope {
         this.info = info
         this.data = data
         this.id = uuidv4()
+        this.head_data = clonedeep(this.data)
         this.changeValueCallback = changeValueCallback
     }
 
@@ -45,7 +48,7 @@ export class Envelope {
         this.head_data = clonedeep(this.data)
     }
     isDiff(index:number) {
-        return this.data[index] == this.head_data[index]
+        return this.data[index] != this.head_data[index]
     }
 }
 

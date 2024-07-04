@@ -4,61 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Interface</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;500;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
 
-    <div id="wrapper">
+
+
+
+
+
+<div id="wrapper">
         <div>
             <div class="header">
-                <h2>JIZU EDITOR</h2>
+                <div class="app_title">TaleShaper</div>
                 <div class="title" >
                     タイトル「<span class="title_name"> </span>」
                 </div>
             </div>
             <div id="editor">
-                <div id="editor_wrapper">
-                    <div id="story_units">
-                        <div id="add_story_button_area">
-                        </div>
-                        <div id="inner_story_units">
-                            <div id="inner_story_units">
+                <div id="with_track_description_wrapper">
+                    <div class="track_descriptions"></div>
+                    <div id="editor_wrapper">
+                        <div>
+                            <div id="story_units">
+                                <div id="add_story_button_area">
+                                </div>
+                                <div id="inner_story_units">
+                                    <div id="inner_story_units">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="timeline">
+
 
                             </div>
                         </div>
-                    </div>
-                    <div id="timeline">
-                        <div class="track_descriptions"></div>
-                    </div>
-                </div>
-                <div id="envelope_manager">
-                    <h2>
-                        Envelope Manager
-                    </h2>
-                    既存のエンベロープ
-                    <div class="all_envelopes">
 
                     </div>
-                    <div class="envelope_generator">
-                        キャラクター
-                        <br>
-                        <select id="chara_name">
-                        </select>
-                        <br>
-                        パラメーター
-                        <br>
-                        <input type="text" name="parameter"><br>
-                        尺度<br>
-                        -1(<input type="text" name="min_description">) ~ 1(<input type="text" name="max_description">)
-                        <br>
-                        <button class="generate_envelope">
-                            作成
-                        </button>
-                    </div>
                 </div>
+
+
+                <div id="bottom_bar">
+                    <svg id="add_envelope_button" width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 円の枠 -->
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="2"/>
+
+                        <!-- 波線（位置維持） -->
+                        <path d="M15,55 Q32.5,15 50,55 T85,55"
+                              fill="none"
+                              stroke="#fff"
+                              stroke-width="3"/>
+
+                        <!-- プラスマーク（少し大きく、左下に移動） -->
+                        <line x1="60" y1="35" x2="80" y2="35" stroke="#fff" stroke-width="2"/>
+                        <line x1="70" y1="25" x2="70" y2="45" stroke="#fff" stroke-width="2"/>
+                    </svg>
+                    <svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 円 -->
+                        <circle cx="50" cy="50" r="45" stroke="white" stroke-width="3" fill="none"/>
+
+                        <!-- 再読み込みアイコン -->
+                        <path d="M50 15 A35 35 0 1 1 15 50" stroke="white" stroke-width="3" fill="none"/>
+                        <polygon points="12,35 15,50 25,45" fill="white"/>
+                    </svg>
+                </div>
+
             </div>
         </div>
     </div>
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <div id="envelope_manager">
+            <h2>
+                エンベロープを追加
+            </h2>
+
+            <div class="all_envelopes">
+
+            </div>
+            <div class="envelope_generator">
+                キャラクター
+                <br>
+                <select id="chara_name">
+                </select>
+                <br>
+                エンベロープの説明
+                <br>
+                <input type="text" name="parameter"><br>
+                最小値と最大値の説明<br>
+                -1(<input type="text" name="min_description" class="small_text">) ~ 1(<input type="text" name="max_description" class="small_text">)
+                <br>
+                <button class="generate_envelope">
+                    作成
+                </button>
+            </div>
+        </div>
+        <span id="close-popup" class="close-button">&times;</span>
+
+    </div>
+
+</div>
 
 <script src="../dist/bundle.js"></script>
 </body>

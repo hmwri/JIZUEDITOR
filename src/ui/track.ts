@@ -51,7 +51,7 @@ export class Track {
             p.line(this.x , this.y+ i/4 * this.height, this.x + this.width, this.y+ i/4 * this.height)
         }
         p.strokeWeight(3)
-        p.stroke(20,20,240)
+        p.stroke(145,274,141)
 
         // ラインを描画
         p.beginShape();
@@ -64,7 +64,7 @@ export class Track {
 
         // データポイントを描画
         for (const point of this.points) {
-            p.fill(0);
+            p.fill(145,274,141);
             p.ellipse(point.x, point.y, point.r, point.r);
         }
 

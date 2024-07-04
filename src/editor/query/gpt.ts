@@ -42,6 +42,7 @@ export async function ask(prompt: string, context:OpenAI.Chat.Completions.ChatCo
             "content" : res
         }
     )
+    console.log(res)
     return {
         body : res,
         context : context

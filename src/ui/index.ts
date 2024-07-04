@@ -4,14 +4,14 @@ import {Point} from "./point";
 import {StoryEditor} from "../editor";
 import {Character, Envelope, EnvelopeInfo, Story} from "../editor/query/types";
 import {Track} from "./track";
-import {SizeInfo} from "./utils";
+import {darkenColor, rgbToHex, SizeInfo} from "./utils";
 
-const pastelColors = [
-    [255, 179, 186], // Light Pink
-    [255, 223, 186], // Light Peach
-    [255, 255, 186], // Light Yellow
-    [186, 255, 201], // Light Mint
-    [186, 225, 255]  // Light Sky Blue
+const pastelColors :[number, number, number][] = [
+    [41, 62, 72],
+    [70, 36, 46],
+    [48, 67, 46],
+    [30, 47, 71],
+    [32, 67, 67],
 ];
 
 
@@ -67,6 +67,8 @@ export class UIManager {
             };
         };
 
+
+
 // p5インスタンスを作成
         new p5(sketch);
     }
@@ -89,16 +91,53 @@ export class UIManager {
             )
         })
 
+        $(".track_descriptions").css("margin-top",
+            $("#story_units").outerHeight()
+            )
+
+        document.addEventListener('keydown', (event: KeyboardEvent) => {
+            // スペースキーが押されたかどうかを確認
+            if (event.code === 'Space') {
+                this.editor.reflectChange()
+            }
+        });
+
+        $(document).ready(function(){
+            function syncScroll(source : string, target : string) {
+                $(source).on('scroll', function() {
+                    $(target).scrollTop($(source).scrollTop());
+                    $(target).scrollLeft($(source).scrollLeft());
+                });
+            }
+
+            syncScroll('.track_descriptions', '#timeline');
+            syncScroll('#timeline', '.track_descriptions');
+
+                // ポップアップを開く
+                $('#add_envelope_button').click(function() {
+                    $('#popup-background').show();
+                    $('#popup').fadeIn();
+                });
+
+                // ポップアップを閉じる
+                $('#close-popup, #popup-background').click(function() {
+                    $('#popup').fadeOut();
+                    $('#popup-background').hide();
+                });
+        });
+
     }
 
     addTrack(envelope: Envelope) {
         let x = 0
         let height = 100
         let y = this.tracks.length * height
-        this.tracks.push(new Track(x, y, this.width, height, envelope, pastelColors[this.tracks.length % 5]))
+        let c = pastelColors[this.tracks.length % 5]
+        this.tracks.push(new Track(x, y, this.width, height, envelope, c))
         this.resizeCanvas(this.width, y + height)
         var newDiv = $(`<div>${envelope.info.character.name}<br>${envelope.info.name}</div>`);
         newDiv.height(height)
+        newDiv.css("background-color", rgbToHex(darkenColor(c ,0.5)))
         $(".track_descriptions").append(newDiv)
     }
 

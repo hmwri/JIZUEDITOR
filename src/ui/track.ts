@@ -2,7 +2,6 @@ import {Envelope} from "../editor/query/types";
 import p5 from "p5";
 import $ from "jquery";
 import {Point} from "./point";
-import {changeStory} from "../editor/query";
 
 export class Track {
     x : number

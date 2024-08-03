@@ -1,0 +1,1 @@
+export type lang_type = "en" | "ja"

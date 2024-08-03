@@ -1,4 +1,4 @@
-import {changeStory, getEnvelopeValues} from "./index";
+import {getEnvelopeValues} from "./index";
 import { v4 as uuidv4 } from "uuid"
 const clonedeep = require('lodash/cloneDeep');
 
@@ -42,7 +42,7 @@ export class Envelope {
     }
     insertEmptyPoint(index: number) {
         this.data.splice(index, 0, this.data[index])
-        this.head_data.splice(index, 0, this.data[index])
+        this.head_data.splice(index, 0, null)
     }
     commit() {
         this.head_data = clonedeep(this.data)

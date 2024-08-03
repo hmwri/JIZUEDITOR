@@ -4,13 +4,18 @@ import {UIManager} from "./ui";
 import {EnvelopeInfo} from "./editor/query/types";
 
 
+
+
+
+
 var editor : StoryEditor
 $(document).ready(async function() {
     let ui = new UIManager()
     editor = new StoryEditor(ui)
+    editor.language = "ja"
     ui.editor = editor
     ui.initialize()
-    await editor.generate(true)
+    await editor.generate(false)
     editor.generateDefaultEnvelopes()
 
     // var ts = await getTimeSeries(story)

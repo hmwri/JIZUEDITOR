@@ -1,6 +1,5 @@
 import $ from "jquery";
 import {Track} from "./track";
-import {changeStory} from "../editor/query";
 import {SizeInfo} from "./utils";
 
 export class Point {

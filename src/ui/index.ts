@@ -95,12 +95,11 @@ export class UIManager {
             $("#story_units").outerHeight()
             )
 
-        document.addEventListener('keydown', (event: KeyboardEvent) => {
-            // スペースキーが押されたかどうかを確認
-            if (event.code === 'Space') {
-                this.editor.reflectChange()
-            }
+        $('#reflectChange').click(() => {
+            this.editor.reflectChange()
         });
+
+
 
         $(document).ready(function(){
             function syncScroll(source : string, target : string) {
@@ -124,6 +123,19 @@ export class UIManager {
                     $('#popup').fadeOut();
                     $('#popup-background').hide();
                 });
+
+            // ポップアップを開く
+            $('.set_basic_story_button').click(function() {
+                $('#popup-background').show();
+                $('#popup2').fadeIn();
+            });
+
+            // ポップアップを閉じる
+            $('#close-popup2, #popup-background').click(function() {
+                $('#popup2').fadeOut();
+                $('#popup-background').hide();
+            });
+
         });
 
     }

@@ -18,7 +18,7 @@ body {
 
 #timeline {
     position: relative;
-    height:300px;
+    max-height:500px;
     white-space: nowrap;
     overflow-y: scroll;
 
@@ -44,6 +44,10 @@ body {
     z-index: -1;
 
 }
+.title_line{
+    display: flex;
+    justify-content: space-between;
+}
 
 #with_track_description_wrapper{
     width: 100%;
@@ -63,10 +67,10 @@ body {
     font-size: 35px;
 }
 .track_descriptions {
-    font-size: 12px;
+    font-size: 16px;
     width: 150px;
     overflow-y: scroll;
-    height: 300px;
+    max-height: 500px;
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none;
 
@@ -148,7 +152,7 @@ body {
 }
 
 
-#popup {
+#popup, #popup2 {
     display: none;
     position: fixed;
     top: 50%;

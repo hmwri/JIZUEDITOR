@@ -91,6 +91,18 @@ export class UIManager {
             )
         })
 
+        $("#generate_initial_story_button").on("click", () => {
+            let input_field = $("#llm_request") as unknown  as HTMLInputElement;
+            let request = input_field.value;
+            if(request) {
+                this.editor.generate(false)
+            }else{
+                //時間があったら実装
+            }
+
+
+        })
+
         $(".track_descriptions").css("margin-top",
             $("#story_units").outerHeight()
             )

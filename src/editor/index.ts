@@ -16,7 +16,9 @@ export class StoryEditor {
         this.ui = ui
     }
 
-    async generate(test : boolean=false) {
+    async generate(prompt:string, test : boolean=false) {
+        this.envelopes = []
+        this.ui.removeAllTrack()
         if(test) {
             this.nowStory = JSON.parse(
 
@@ -32,7 +34,7 @@ export class StoryEditor {
             //     )
         }else{
             this.nowStory = await makeStory(
-                "強大な敵に立ち向かうSF映画．登場人物は敵含め2人で，四章ぐらい作って",
+                prompt,
                 (story : Story) => {
                     this.ui.setStory(story)
                 },
@@ -41,10 +43,12 @@ export class StoryEditor {
         }
         console.log(JSON.stringify(this.nowStory))
         this.ui.setStory(this.nowStory)
+        this.generateDefaultEnvelopes();
 
     }
 
     async generateDefaultEnvelopes() {
+
         for (let chara of this.nowStory.characters) {
             await this.generateAndAddEnvelope(new EnvelopeInfo(
                 chara,

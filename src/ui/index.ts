@@ -92,10 +92,13 @@ export class UIManager {
         })
 
         $("#generate_initial_story_button").on("click", () => {
-            let input_field = $("#llm_request") as unknown  as HTMLInputElement;
-            let request = input_field.value;
+
+            let input_field = $("#llm_request");
+            let request = input_field.val() as string
+            console.log(request)
             if(request) {
-                this.editor.generate(false)
+                console.log("pushed")
+                this.editor.generate(request)
             }else{
                 //時間があったら実装
             }
@@ -163,6 +166,12 @@ export class UIManager {
         newDiv.height(height)
         newDiv.css("background-color", rgbToHex(darkenColor(c ,0.5)))
         $(".track_descriptions").append(newDiv)
+    }
+
+    removeAllTrack() {
+        this.tracks = []
+        $(".track_descriptions").empty()
+
     }
 
     addCharacter(chara: Character | Character[]) {

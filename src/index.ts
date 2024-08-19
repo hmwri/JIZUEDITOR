@@ -15,8 +15,7 @@ $(document).ready(async function() {
     editor.language = "ja"
     ui.editor = editor
     ui.initialize()
-    await editor.generate(false)
-    editor.generateDefaultEnvelopes()
+    await editor.generate("強大な敵に主人公が立ち向かう４章のストーリー．登場人物は主人公と敵合わせて2人で", false)
 
     // var ts = await getTimeSeries(story)
     // console.log(ts)

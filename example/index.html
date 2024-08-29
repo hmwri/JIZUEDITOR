@@ -58,28 +58,35 @@
 
 
                 <div id="bottom_bar">
-                    <svg id="add_envelope_button" width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <!-- 円の枠 -->
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="2"/>
+                    <button id="add_envelope_button">
+                        エンベロープを追加
+                    </button>
 
-                        <!-- 波線（位置維持） -->
-                        <path d="M15,55 Q32.5,15 50,55 T85,55"
-                              fill="none"
-                              stroke="#fff"
-                              stroke-width="3"/>
+                    <button id="reflectChange">
+                        生成
+                    </button>
+<!--                    <svg id="add_envelope_button" width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">-->
+<!--                        &lt;!&ndash; 円の枠 &ndash;&gt;-->
+<!--                        <circle cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="2"/>-->
 
-                        <!-- プラスマーク（少し大きく、左下に移動） -->
-                        <line x1="60" y1="35" x2="80" y2="35" stroke="#fff" stroke-width="2"/>
-                        <line x1="70" y1="25" x2="70" y2="45" stroke="#fff" stroke-width="2"/>
-                    </svg>
-                    <svg id="reflectChange" width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <!-- 円 -->
-                        <circle cx="50" cy="50" r="45" stroke="white" stroke-width="3" fill="none"/>
+<!--                        &lt;!&ndash; 波線（位置維持） &ndash;&gt;-->
+<!--                        <path d="M15,55 Q32.5,15 50,55 T85,55"-->
+<!--                              fill="none"-->
+<!--                              stroke="#fff"-->
+<!--                              stroke-width="3"/>-->
 
-                        <!-- 再読み込みアイコン -->
-                        <path d="M50 15 A35 35 0 1 1 15 50" stroke="white" stroke-width="3" fill="none"/>
-                        <polygon points="12,35 15,50 25,45" fill="white"/>
-                    </svg>
+<!--                        &lt;!&ndash; プラスマーク（少し大きく、左下に移動） &ndash;&gt;-->
+<!--                        <line x1="60" y1="35" x2="80" y2="35" stroke="#fff" stroke-width="2"/>-->
+<!--                        <line x1="70" y1="25" x2="70" y2="45" stroke="#fff" stroke-width="2"/>-->
+<!--&lt;!&ndash;                    </svg>&ndash;&gt;-->
+<!--                    <svg id="reflectChange" width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">-->
+<!--                        &lt;!&ndash; 円 &ndash;&gt;-->
+<!--                        <circle cx="50" cy="50" r="45" stroke="white" stroke-width="3" fill="none"/>-->
+
+<!--                        &lt;!&ndash; 再読み込みアイコン &ndash;&gt;-->
+<!--                        <path d="M50 15 A35 35 0 1 1 15 50" stroke="white" stroke-width="3" fill="none"/>-->
+<!--                        <polygon points="12,35 15,50 25,45" fill="white"/>-->
+<!--                    </svg>-->
                 </div>
 
             </div>
@@ -124,13 +131,17 @@
                 基本ストーリーの設定
             </h2>
             <div class="">
-                LLMへのリクエストから生成
-                <input type="text" id="llm_request">
-                
-                <textarea id="basic_story">
-
-                </textarea>
+                <H3>
+                    LLMにストーリーを生成してもらう
+                </H3>
+                <textarea id="llm_request"></textarea><br>
                 <button id="generate_initial_story_button">生成</button>
+
+                <H3>
+                    ストーリーを設定（章ごとに改行で区切り）
+                </H3>
+                <textarea id="original_story"></textarea><br>
+                <button id="set_initial_story_button">設定</button>
             </div>
         <span id="close-popup2" class="close-button">&times;</span>
 

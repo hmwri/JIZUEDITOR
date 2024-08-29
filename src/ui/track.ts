@@ -49,7 +49,7 @@ export class Track {
             }
             p.line(this.x , this.y+ i/4 * this.height, this.x + this.width, this.y+ i/4 * this.height)
         }
-        p.strokeWeight(3)
+        p.strokeWeight(5)
         p.stroke(145,274,141)
 
         // ラインを描画

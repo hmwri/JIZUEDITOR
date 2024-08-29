@@ -1,4 +1,4 @@
-import {ask, askStream} from "./gpt";
+import {ask, askStream, generateImage} from "./gpt";
 import {Envelope, EnvelopeInfo, Scene, Story} from "./types";
 import {generateChangeScenesPrompt, generateMakeEnvelopePrompt, generateMakeStoryPrompt} from "./promptGenerator";
 import {lang_type} from "../config";
@@ -42,7 +42,7 @@ export async function getEnvelopeValues(story: Story , envelope: EnvelopeInfo, l
 
 
 
-export async function changeScenes(story: Story , envelopes: Envelope[], language:lang_type) {
+export async function changeScenes(story: Story ,  envelopes: Envelope[], streamingCallback: (scenes :Scene[]) => void,  language:lang_type) {
 
     console.log(envelopes[0].data)
     console.log(envelopes[0].head_data)
@@ -95,8 +95,52 @@ export async function changeScenes(story: Story , envelopes: Envelope[], languag
 //             }
 //         )
 
+    let result = ""
+
+    let callback = (token : string) =>  {
+        result += token
+        try {
+            let dict = JSON.parse(jsonrepair(result))
+            if(dict.hasOwnProperty("scenes")) {
+                let scenes = dict.scenes as Scene[]
+                if(Array.isArray(scenes)) {
+                    streamingCallback(dict.scenes as Scene[])
+                }
+
+            }
+
+        } catch  (e) {
+            console.log(e)
+        }
+    }
+
+    let res = await askStream(prompt, callback, [], true)
     console.log("from: changeScenes" , prompt)
-    return JSON.parse((await ask(prompt, [], true)).body).scenes as Scene[]
+    console.log(res.body)
+    return JSON.parse(res.body)["scenes"] as Scene[]
+}
+
+export async function generateImageFromScene(story:Story, scene_number:number) {
+    let p = `
+    ${story.scenes[scene_number].scene_body}
+    以上のようなストーリーを表す漫画のコマを想像してみよう．果たしてどんなコマが想像できるだろうか?
+    ストーリーの結末を一番顕著に表せるようなコマを考えること．名前などは返答に含める必要はなく，視覚的情報のみを具体的に提供せよ
+    また，参考情報として以下に各登場人物の身体的特徴を示す．登場人物をすべて登場させる必要はない
+    
+    ${story.characters.map(character => {
+        if(character.name!= "鑑賞者") {
+            const looks = character.looks ? `-身体的特徴: ${character.looks}` : '';
+            return `・${character.name}\n${looks}\n`;
+        }
+    }).join('')}
+    
+    なお，返答はコマの具体的な視覚的説明（配置や，各キャラクターの特徴，環境等）のみにしろ．そして説明は1文におさめ，英語で返答せよ．コマ割りはするな．1コマでよい．
+    `
+
+    console.log(p)
+
+    let prompt = await ask(p,[],false,"gpt-4o")
+    return await generateImage(prompt.body + " - style:cartoon")
 }
 
 
@@ -106,7 +150,6 @@ function generatePlainTextFromSceneNumbers(numbers: number[], language: lang_typ
         str += language == "en" ? `Chapter ${n}, ` : `第${n}章、`
     }
     return str
-
 }
 
 

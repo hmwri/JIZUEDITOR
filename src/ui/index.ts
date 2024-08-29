@@ -6,15 +6,20 @@ import {Character, Envelope, EnvelopeInfo, Story} from "../editor/query/types";
 import {Track} from "./track";
 import {darkenColor, rgbToHex, SizeInfo} from "./utils";
 
+// const pastelColors :[number, number, number][] = [
+//     [41, 62, 72],
+//     [70, 36, 46],
+//     [30, 47, 71],
+//     [42,47, 27],
+// ];
+
 const pastelColors :[number, number, number][] = [
     [41, 62, 72],
     [70, 36, 46],
-    [48, 67, 46],
     [30, 47, 71],
-    [32, 67, 67],
+    [70, 36, 46],
+    [30, 47, 71],
 ];
-
-
 
 export class UIManager {
     width: number
@@ -97,8 +102,52 @@ export class UIManager {
             let request = input_field.val() as string
             console.log(request)
             if(request) {
-                console.log("pushed")
+                request =
+                    `
+第一章
+未来都市ネオトーキョー。優れたサイバネテイック技術で有名な科学者、天野は新たな研究に没頭していた。ある日、黄金の目を持つ謎の敵、クロノスが現れる。
+
+第二章
+次々と都市を襲撃し、民衆を恐怖に陥れる。玲は自らの技術を使い、エンジニアである友人、隼人と協力してクロノスに立ち向かうことを決意する。
+
+第三章
+玲と隼人は秘密基地で特殊装備を開発。クロノスの弱点を探り当てるため、彼の過去のデータを解析する。そして、彼の動きを解析するプログラムが完成する。
+
+第四章
+クロノスとの最終決戦が近づく。玲と隼人は最新鋭の装備を身に着け、クロノスの本拠地に乗り込む。激しい戦いが繰り広げられ、ついにクロノスの弱点を突くチャンスが訪れる。
+
+第五章
+玲と隼人はクロノスを倒すことに成功する。
+ネオトーキョーは平和を取り戻し、玲は新たな研究を続けていく。困難を乗り越えた二人の友情は今後もますます深まるだろう。
+
+これをこのまま設定して
+                    `
+                request =
+                    `
+第一章
+春の温かい日差しが差し込む午後、美咲はいつものカフェで休息を取っていた。新しいプロジェクトの事で頭を悩ませていた彼女は、カフェの隅でノートを広げて勉強している大＋ 輝に気付く。一見ふつうの学生だが、その瞳には何か特別な輝きがあり、美咲は妙に気になってしまう。大輝も、美咲の視線に気づき、二人は軽く微笑む。
+
+第二章
+数日後、美咲は仕事帰りに手びそのカフェに立ち寄る。すると、大輝も同じ場所で勉強していた。彼が美咲に気付き、思わず声をかける。「またお会いしましたね。ここが好きなんですか？」二人の会話は自然に流れ、互いの趣味や日常について話し始める。
+
+
+第三章
+ある日、大輝は美咲を桜の名所に誘う。桜が満開の公園で二人は歩きながら多くの話題を共有する。美咲は、大輝の夢や目標を聞いて、彼の前向きな姿勢に感銘を受ける。一+ 方、大輝も、美咲が経験した苦労や努力を尊敬し合う。桜の花びらが舞い散る中で、二人は一層親しくなり、お互いの心に惹かれていく。
+
+第四章
+日が経つにつれ、二人の距離は縮まっていくが、現実の問題も次第に浮かび上がる。美咲は仕事と恋愛のバランスに悩み、大輝は学業との両立に苦しむ。二人はお互いを支え合いながらも、自分の道に迷いが生じ始める。
+
+第五章
+桜が散り始めたある日、二人は手び公園を訪れる。美咲は、大輝に対して自分の気持ちを正直に伝えることを決意する。大輝も、将来について正直に話し合う覚悟を決めていた。
+互いの気持ちを確認し合い、二人は共に歩む未来を見据えて、新たな一歩を踏み出すことを誓う。
+
+
+なお．大輝は大学院生とする．美咲を1番目とすること
+これをこのまま設定して
+                    `
                 this.editor.generate(request)
+                $('#popup2').fadeOut();
+                $('#popup-background').hide();
             }else{
                 //時間があったら実装
             }
@@ -159,7 +208,10 @@ export class UIManager {
         let x = 0
         let height = 100
         let y = this.tracks.length * height
-        let c = pastelColors[this.tracks.length % 5]
+        let c = pastelColors[this.tracks.length % pastelColors.length]
+        c[0] -= 10
+        c[1] -= 10
+        c[2] -= 10
         this.tracks.push(new Track(x, y, this.width, height, envelope, c))
         this.resizeCanvas(this.width, y + height)
         var newDiv = $(`<div>${envelope.info.character.name}<br>${envelope.info.name}</div>`);
@@ -200,7 +252,7 @@ export class UIManager {
         this.p.resizeCanvas(this.width, this.height);
     }
 
-    setStory(story: Story) {
+    setStory(story: Story, regenerateAddButton:boolean) {
         this.resetScene()
         if (story.title) {
             this.setTitle(story.title)
@@ -211,7 +263,10 @@ export class UIManager {
         if (story.characters) {
             this.setCharacters(story.characters)
         }
-        this.regenerateAddStoryButton(story)
+        if(regenerateAddButton) {
+            this.regenerateAddStoryButton(story)
+        }
+
 
     }
     reloadTracks() {

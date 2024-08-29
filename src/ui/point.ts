@@ -11,7 +11,7 @@ export class Point {
     callback : (v: number, i:number)=>void ;
 
     track: Track
-    r:number = 10;
+    r:number = 15;
 
     constructor(index:number, value:number, track:Track, callback:(v: number, i:number) => void) {
         this.index = index

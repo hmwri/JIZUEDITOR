@@ -4,6 +4,8 @@ const clonedeep = require('lodash/cloneDeep');
 
 export interface Character {
     name: string;
+    description?:string,
+    looks?:string,
 }
 
 const NOTSET:string = "NOTSET"
@@ -11,7 +13,6 @@ export interface Scene {
     scene_number: number;
     scene_title: string;
     scene_body: string;
-
 }
 
 export class Story {

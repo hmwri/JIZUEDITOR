@@ -15,7 +15,7 @@ interface GptResponse {
 }
 
 
-export async function ask(prompt: string, context:OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [], json=false): Promise<GptResponse> {
+export async function ask(prompt: string, context:OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [], json=false, model="gpt-4o"): Promise<GptResponse> {
     context.push(
         {
             "role" : "user",
@@ -23,7 +23,7 @@ export async function ask(prompt: string, context:OpenAI.Chat.Completions.ChatCo
         }
     )
     const completion = await openai.chat.completions.create({
-        model: "gpt-4o", // 使いたいGPTのModel
+        model: model, // 使いたいGPTのModel
         messages: [
             {
                 "role" : "system",
@@ -87,4 +87,23 @@ export async function askStream(prompt: string, callback: (token: string) => voi
         body : res,
         context : context
     }
+
+
+}
+
+
+
+
+
+export async function generateImage(prompt:string) {
+    const response = await openai.images.generate(
+        {
+            model: "dall-e-3",
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024",
+        }
+    );
+
+    return response.data[0].url;
 }

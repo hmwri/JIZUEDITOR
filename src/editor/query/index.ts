@@ -1,4 +1,4 @@
-import {ask, askStream, generateImage} from "./gpt";
+import {ask, askClaudeStream, askStream, generateImage} from "./gpt";
 import {Envelope, EnvelopeInfo, Scene, Story} from "./types";
 import {generateChangeScenesPrompt, generateMakeEnvelopePrompt, generateMakeStoryPrompt} from "./promptGenerator";
 import {lang_type} from "../config";

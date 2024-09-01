@@ -68,7 +68,7 @@ export function generateMakeEnvelopePrompt(story: Story , envelope: EnvelopeInfo
             let prompt = `以下の話について、各章における ${envelope.character.name} の${envelope.name}を${envelope.min_description}(-0.8)~${envelope.max_description}(0.8)で表しなさい。
     `
                 +
-                (envelope.character.name == "鑑賞者" ? "" : "なお、そのキャラがその章に登場していない場合やわからない場合はnullと答えなさい。")
+                (envelope.character.name == "鑑賞者" ? "" : "なお、そのキャラがその章に登場していない場合も周辺の章から感情値を推定しなさい，わからない場合は0としなさい")
                 +
                 `
     答えはjson形式で以下のように返しなさい` +
@@ -94,7 +94,7 @@ Answer in JSON format as follows: ` +
 }
 
 export function generateChangeScenesPrompt(story: Story , envelopes: Envelope[], changed_scene_numbers : number[], language:lang_type) {
-    let envelope_str = generatePlainTextFromEnvelopes(envelopes, language)
+    let envelope_str = generatePlainTextFromEnvelopes2(envelopes, language)
     let story_str = generatePlainTextFromScenes(story.scenes, language, changed_scene_numbers)
 
 
@@ -106,6 +106,8 @@ export function generateChangeScenesPrompt(story: Story , envelopes: Envelope[],
 あなたはプロの小説家です。以下の指示に従って物語を生成してください。
 なお，物語のタイトルは以下の通りです
 「${story.title}」
+
+主人公は「${story.characters[1].name}」である
 
 各章における心情に関する記述は以下となっています。なお，
 - 主体：値の主を表します。
@@ -119,19 +121,21 @@ ${envelope_str}
 2. 各章のつながりを考慮し、心情の変動を自然に反映させてください。
 3. 各章の文量は200文字以内としなさい。
 4. 心情の名前を直接物語に組み込んだり、心情の動きを明示的に説明したりすることは避けてください。
-5. 章を書く前に、心情の変化の流れを値に沿って詳しく分析し，それに基づく各章のプロット案を提案してください。
+5. 章を書く前に、特徴的な心情の変化の流れを抽出し，詳しく分析しなさい．
 6. 分析は露骨に物語に反映させず、章同士のつながりが自然になるよう注意してください。
 7. 分析の際は、変化に加えて心情の値が範囲内でどの位置にあるかに注目し，心情間の動きの比較もしてください。また，それを踏まえてどのようなストーリーの流れを描くかを説明しなさい．
+
 
 返答は以下の形式で行ってください：
 ` + JSON.stringify(
                 {
-                    analyzes: "<<心情の動きと値に関する考察と各章のプロット案>>",
+                    analyzes: "<<それぞれの登場人物ごとに変化に加えて心情の値が範囲内でどの位置にあるかに注目し，心情間の動きの比較>> これは決してjson形式で行うな文章で行え",
+                    tenkai:"<<その分析結果からどのような展開が想起されるか具体的に説明しろ 文章でよい>>",
                     scenes: [
                         {
                             scene_number: 1,
                             scene_title: "第一章のタイトル",
-                            scene_body: "第一章の内容",
+                            scene_body: "第一章の内容<<ここでは，分析結果を踏まえたストーリーの内容をしっかりと生成してください>>",
                         },
                         // 他の章も同様に
                     ],
@@ -142,11 +146,14 @@ ${envelope_str}
 
 注意：
 - ${changed_scene_str}のみを生成してください。
-- 各心情について、主体、属性、尺度を十分に考慮して物語を構築してください。
-- 分析では、「すべての」心情の値の位置（範囲内での位置）に注目し、その変化が物語にどのように影響するかを検討してください。
-- あなたはプロの小説家です．章のつながりを意識し，心情の動きを説明する文章（例:その結果，幸福度は下がった）を露骨にストーリーに入れ込むことはしないでください．
+- 主体、心情、尺度を十分に考慮して物語を構築してください。
+- 分析では心情の値の位置（範囲内での位置）に注目し、その変化が物語にどのように影響するかを検討してください。
+- あなたはプロの小説家です．心情の動きを説明する文章（例:その結果，幸福度は下がった）を露骨にストーリーに入れ込むことはしないでください．
 - いきなり新しい仲間や登場人物を登場させないこと
+- 登場人物の心情の動きの違いに特に着目すること
 - 前後の章との整合性に注意すること
+- ストーリーには各登場人物からの視点をいれることが望ましい
+- ストーリーには具体性を持たせなさい
 `;
             return prompt
         }
@@ -235,7 +242,7 @@ function generatePlainTextFromScenes(scenes: Scene[], language :lang_type, ignor
 function generatePlainTextFromEnvelopes(envelopes:Envelope[], language:lang_type,  head=false) {
 
     type JPresultType =
-        { [key: string]: { "主体": string, "属性":string, "尺度": string , "値": number }[] }
+        { [key: string]: { "主体": string, "心情":string, "尺度": string , "値": number }[] }
     type ENresultType =
         { [key: string]: { "Agent": string, "Attribute": string, "Scale": string, "Value": number }[] };
 
@@ -253,7 +260,7 @@ function generatePlainTextFromEnvelopes(envelopes:Envelope[], language:lang_type
                 result = result as JPresultType
                 result[chapter].push({
                     "主体": envelope.info.character.name,
-                    "属性" : envelope.info.name,
+                    "心情" : envelope.info.name,
                     "尺度" : `${envelope.info.min_description}(-1) ~ ${envelope.info.max_description}(1)`,
                     "値": data[i]
                 });
@@ -273,6 +280,30 @@ function generatePlainTextFromEnvelopes(envelopes:Envelope[], language:lang_type
     return JSON.stringify(result, null, 2);
 }
 
+function generatePlainTextFromEnvelopes2(envelopes:Envelope[], language:lang_type,  head=false) {
+
+    let array = []
+
+    for(let i =0; i < envelopes.length; i++) {
+
+// 辞書を作成
+        const dictionary: { [key: string]: number } = {};
+
+// 配列と章のタイトルを結びつける
+        envelopes[i].data.forEach((value, index) => {
+            dictionary[`第${index + 1}章`] = Math.round(value * 100) / 100;;
+        });
+        let dict = {
+            "主体" : envelopes[i].info.character.name,
+            "心情" : envelopes[i].info.name,
+            "尺度" : `${envelopes[i].info.min_description}(-1) ~ ${envelopes[i].info.max_description}(1)`,
+            "値の変動": dictionary
+        }
+        array.push(dict)
+    }
+
+    return JSON.stringify(array, null, 2);
+}
 
 function generatePlainTextFromEnvelopeData(data: number[]) {
     let prompt = ""

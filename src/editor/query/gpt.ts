@@ -1,7 +1,9 @@
 import {OpenAI} from "openai";
 
+import Anthropic from '@anthropic-ai/sdk';
 
 import {OPENAI_API_KEY} from "../../ignore/apikey";
+import TextBlock = Anthropic.TextBlock;
 
 
 const openai = new OpenAI({
@@ -91,7 +93,50 @@ export async function askStream(prompt: string, callback: (token: string) => voi
 
 }
 
+export async function askClaudeStream(prompt: string, callback: (token: string) => void, context: Anthropic.MessageCreateParams['messages'] = [], json = false) {
+    context.push(
+        {
+            role: 'user',
+            content: prompt,
+        }
+    );
 
+    const client = new Anthropic({
+        apiKey: "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",
+        dangerouslyAllowBrowser: true
+    });
+
+    const stream = client.messages.stream({
+        model: 'claude-3-5-sonnet-20240620', // Specify the desired model
+        messages: [
+            {
+                role: 'user',
+                content: 'You are a helpful assistant. ' + (json ? 'Your answer will be formatted as json' : ''),
+            },
+            {
+                role:"assistant",
+                content: " 'ok' ",
+            },
+            ...context,
+        ],
+        max_tokens: 1024,
+    }).on('text', (text) => {
+        callback(text)
+    })
+
+    const chatCompletion = await stream.finalMessage();
+    let res = chatCompletion.content[0] as TextBlock
+    context.push(
+        {
+            role: 'assistant',
+            content: res.text,
+        }
+    );
+    return {
+        body: res.text,
+        context: context,
+    };
+}
 
 
 

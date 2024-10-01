@@ -102,7 +102,7 @@ export async function askClaudeStream(prompt: string, callback: (token: string) 
     );
 
     const client = new Anthropic({
-        apiKey: "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",
+        apiKey:"",
         dangerouslyAllowBrowser: true
     });
 

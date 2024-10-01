@@ -6,21 +6,21 @@ import {Character, Envelope, EnvelopeInfo, Story} from "../editor/query/types";
 import {Track} from "./track";
 import {darkenColor, rgbToHex, SizeInfo} from "./utils";
 
-// const pastelColors :[number, number, number][] = [
-//     [41, 62, 72],
-//     [70, 36, 46],
-//     [30, 47, 71],
-//     [42,47, 27],
-// ];
-
 const pastelColors :[number, number, number][] = [
     [41, 62, 72],
-
-    [30, 47, 71],
     [70, 36, 46],
     [30, 47, 71],
-    [70, 36, 46],
+    [42,47, 27],
 ];
+
+// const pastelColors :[number, number, number][] = [
+//     [41, 62, 72],
+//
+//     [30, 47, 71],
+//     [70, 36, 46],
+//     [30, 47, 71],
+//     [70, 36, 46],
+// ];
 
 export class UIManager {
     width: number
@@ -95,6 +95,22 @@ export class UIManager {
                     max_description
                 )
             )
+        })
+        $("#set_initial_story_button").on("click", () => {
+
+            let input_field = $("#original_story");
+            let request = input_field.val() as string
+
+            console.log(request)
+            if(request) {
+                this.editor.generate(request + "\n\n以上のストーリの内容で，改行で章を区切って内容を「そのまま」設定してほしい．絶対にあなたが書き換えるな　ストーリーの内容への追加も許さない")
+                $('#popup2').fadeOut();
+                $('#popup-background').hide();
+            }else{
+                //時間があったら実装
+            }
+
+
         })
 
         $("#generate_initial_story_button").on("click", () => {
@@ -259,7 +275,7 @@ export class UIManager {
             this.setTitle(story.title)
         }
         for (const unit of story.scenes) {
-            this.addScene(unit.scene_body)
+            this.addScene(`「${unit.scene_title}」\n` + unit.scene_body)
         }
         if (story.characters) {
             this.setCharacters(story.characters)

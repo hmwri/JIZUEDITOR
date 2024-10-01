@@ -3,7 +3,7 @@ import {Envelope, EnvelopeInfo, Scene, Story} from "./types";
 import {generateChangeScenesPrompt, generateMakeEnvelopePrompt, generateMakeStoryPrompt} from "./promptGenerator";
 import {lang_type} from "../config";
 const { jsonrepair } = require('jsonrepair')
-
+import $ from "jquery";
 
 
 export async function makeStory(task:string,streamingCallback: (story :Story) => void, language:lang_type, ) {
@@ -50,6 +50,7 @@ export async function changeScenes(story: Story ,  envelopes: Envelope[], stream
     // let head_envelope_str = generatePlainTextFromEnvelopes(envelopes, true)
 
     let changed_scene_numbers = []
+
     for(let i = 0; i < story.scenes.length; i++) {
         let flag = false
         for(let env of envelopes) {
@@ -60,6 +61,9 @@ export async function changeScenes(story: Story ,  envelopes: Envelope[], stream
         if(flag) {
             changed_scene_numbers.push(i + 1)
         }
+    }
+    if(changed_scene_numbers.length == 0) {
+        return  []
     }
     let prompt = generateChangeScenesPrompt(story, envelopes, changed_scene_numbers, language)
 
@@ -117,6 +121,11 @@ export async function changeScenes(story: Story ,  envelopes: Envelope[], stream
     let res = await askStream(prompt, callback, [], true)
     console.log("from: changeScenes" , prompt)
     console.log(res.body)
+    try {
+        $("#message").text(JSON.parse(res.body)["analyzes"] + "\n" + JSON.parse(res.body)["tenkai"])
+    } catch (e) {
+        $("#message").text("エラー")
+    }
     return JSON.parse(res.body)["scenes"] as Scene[]
 }
 

@@ -223,6 +223,7 @@ export class StoryEditor {
         )
     }
 
+
     async reflectChange() {
 
         let streamingCallback = (scenes:Scene[]) => {
@@ -240,9 +241,12 @@ export class StoryEditor {
         for (let c of cs) {
            this.nowStory.scenes[c.scene_number - 1] = c
         }
+
         this.ui.setStory(this.nowStory, true)
 
     }
+
+
 
     insertEmptyScene(index:number) {
 

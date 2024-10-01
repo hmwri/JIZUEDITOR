@@ -68,7 +68,7 @@ export function generateMakeEnvelopePrompt(story: Story , envelope: EnvelopeInfo
             let prompt = `以下の話について、各章における ${envelope.character.name} の${envelope.name}を${envelope.min_description}(-0.8)~${envelope.max_description}(0.8)で表しなさい。
     `
                 +
-                (envelope.character.name == "鑑賞者" ? "" : "なお、そのキャラがその章に登場していない場合も周辺の章から感情値を推定しなさい，わからない場合は0としなさい")
+                (envelope.character.name == "鑑賞者" ? "" : "なお、そのキャラがその章に登場していない場合や，わからない場合は0としなさい")
                 +
                 `
     答えはjson形式で以下のように返しなさい` +
@@ -119,7 +119,7 @@ ${envelope_str}
 指示：
 1. ${changed_scene_str}を生成してください。
 2. 各章のつながりを考慮し、心情の変動を自然に反映させてください。
-3. 各章の文量は200文字以内としなさい。
+3. 各章の文量は"必ず"180文字以内としなさい。
 4. 心情の名前を直接物語に組み込んだり、心情の動きを明示的に説明したりすることは避けてください。
 5. 章を書く前に、特徴的な心情の変化の流れを抽出し，詳しく分析しなさい．
 6. 分析は露骨に物語に反映させず、章同士のつながりが自然になるよう注意してください。

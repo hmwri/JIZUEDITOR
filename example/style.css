@@ -157,6 +157,12 @@ body {
     justify-content: space-between;
 }
 
+#message{
+    width: 900px;
+    margin: auto;
+    margin-top: 40px;
+}
+
 
 
 #popup, #popup2 {

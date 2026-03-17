@@ -2,6 +2,7 @@ import $ from  'jquery'
 import {StoryEditor} from "./editor";
 import {UIManager} from "./ui";
 import {EnvelopeInfo} from "./editor/query/types";
+import {OPENAI_API_KEY} from "./ignore/apikey";
 
 
 
@@ -10,8 +11,15 @@ import {EnvelopeInfo} from "./editor/query/types";
 
 var editor : StoryEditor
 $(document).ready(async function() {
+
+
     let ui = new UIManager()
-    editor = new StoryEditor(ui)
+    const apikey = sessionStorage.getItem('apikey');
+    if (apikey !== null) {
+        editor = new StoryEditor(ui , apikey)
+    } else {
+        editor = new StoryEditor(ui, OPENAI_API_KEY)
+    }
     editor.language = "ja"
 
     ui.editor = editor

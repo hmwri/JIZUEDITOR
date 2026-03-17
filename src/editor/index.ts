@@ -2,6 +2,7 @@ import {Character, Envelope, EnvelopeInfo, Scene, Story,} from "./query/types";
 import {changeScenes, generateImageFromScene, getEnvelopeValues, makeStory} from "./query";
 import {UIManager} from "../ui";
 import {lang_type} from "./config";
+import {LLM} from "./query/gpt";
 
 const clonedeep = require('lodash/cloneDeep');
 
@@ -13,9 +14,11 @@ export class StoryEditor {
     envelopes : Envelope[] = []
     language : lang_type = "ja"
 
-    constructor(ui : UIManager) {
+    constructor(ui : UIManager, openAIAPIKey: string) {
         this.ui = ui
+        LLM.setClients(openAIAPIKey)
     }
+
 
     async generate(prompt:string, test : boolean=false) {
         this.envelopes = []

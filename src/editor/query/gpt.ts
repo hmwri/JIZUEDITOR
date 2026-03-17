@@ -1,154 +1,130 @@
-import {OpenAI} from "openai";
-
-import Anthropic from '@anthropic-ai/sdk';
-
-import {OPENAI_API_KEY} from "../../ignore/apikey";
+import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
+import { OPENAI_API_KEY } from "../../ignore/apikey";
 import TextBlock = Anthropic.TextBlock;
-
-
-const openai = new OpenAI({
-    dangerouslyAllowBrowser: true,
-    apiKey: OPENAI_API_KEY // 先程取得したAPI KEY
-})
-
 interface GptResponse {
-    body: string,
-    context: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+    body: string;
+    context: any[];
 }
 
+export class LLM {
+    private static openai: OpenAI;
+    private static anthropic: Anthropic;
 
-export async function ask(prompt: string, context:OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [], json=false, model="gpt-4o"): Promise<GptResponse> {
-    context.push(
-        {
-            "role" : "user",
-            "content" : prompt
-        }
-    )
-    const completion = await openai.chat.completions.create({
-        model: model, // 使いたいGPTのModel
-        messages: [
-            {
-                "role" : "system",
-                "content" : "You are a helpful assistant. " + (json ? "Your answer will be formatted as json" : ""),
-            },
-            ...context,
-        ],
-        ... (json && {response_format: {"type" : "json_object"}})
+    static setClients(openaiKey: string, anthropicKey: string = "") {
+        this.openai = new OpenAI({
+            apiKey: openaiKey,
+            dangerouslyAllowBrowser: true,
+        });
 
-    });
-    let res = completion.choices[0].message.content
-
-    context.push(
-        {
-            "role" : "assistant",
-            "content" : res
-        }
-    )
-    console.log(res)
-    return {
-        body : res,
-        context : context
-    }
-}
-
-export async function askStream(prompt: string, callback: (token: string) => void, context:OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [], json=false){
-    context.push(
-        {
-            "role" : "user",
-            "content" : prompt
-        }
-    )
-    const chatStream = await openai.beta.chat.completions.stream({
-        model: "gpt-4o", // 使いたいGPTのModel
-        messages: [
-            {
-                "role" : "system",
-                "content" : "You are a helpful assistant. " + (json ? "Your answer will be formatted as json" : ""),
-            },
-            ...context,
-        ],
-        ... (json && {response_format: {"type" : "json_object"}})
-
-    });
-    for await (const message of chatStream) {
-        const token = message.choices[0].delta.content;
-        if (token) {
-            callback(token)
-        }
+        this.anthropic = new Anthropic({
+            apiKey: anthropicKey,
+            dangerouslyAllowBrowser: true,
+        });
     }
 
-    const chatCompletion = await chatStream.finalChatCompletion();
-    let res = chatCompletion.choices[0].message.content
-    context.push(
-        {
-            "role" : "assistant",
-            "content" : res
-        }
-    )
-    return {
-        body : res,
-        context : context
+    static async ask(
+        prompt: string,
+        context: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [],
+        json = false,
+        model = "gpt-4o"
+    ): Promise<GptResponse> {
+        context.push({ role: "user", content: prompt });
+
+        const completion = await this.openai.chat.completions.create({
+            model,
+            messages: [
+                {
+                    role: "system",
+                    content: `You are a helpful assistant. ${json ? "Your answer will be formatted as json" : ""}`,
+                },
+                ...context,
+            ],
+            ...(json && { response_format: { type: "json_object" } }),
+        });
+
+        const res = completion.choices[0].message.content || "";
+        context.push({ role: "assistant", content: res });
+
+        return { body: res, context };
     }
 
+    static async askStream(
+        prompt: string,
+        callback: (token: string) => void,
+        context: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [],
+        json = false,
+        model = "gpt-4o"
+    ): Promise<GptResponse> {
+        context.push({ role: "user", content: prompt });
 
-}
+        const stream = await this.openai.beta.chat.completions.stream({
+            model,
+            messages: [
+                {
+                    role: "system",
+                    content: `You are a helpful assistant. ${json ? "Your answer will be formatted as json" : ""}`,
+                },
+                ...context,
+            ],
+            ...(json && { response_format: { type: "json_object" } }),
+        });
 
-export async function askClaudeStream(prompt: string, callback: (token: string) => void, context: Anthropic.MessageCreateParams['messages'] = [], json = false) {
-    context.push(
-        {
-            role: 'user',
-            content: prompt,
+        for await (const message of stream) {
+            const token = message.choices[0]?.delta?.content;
+            if (token) callback(token);
         }
-    );
 
-    const client = new Anthropic({
-        apiKey:"",
-        dangerouslyAllowBrowser: true
-    });
+        const final = await stream.finalChatCompletion();
+        const res = final.choices[0].message.content || "";
+        context.push({ role: "assistant", content: res });
 
-    const stream = client.messages.stream({
-        model: 'claude-3-5-sonnet-20240620', // Specify the desired model
-        messages: [
-            {
-                role: 'user',
-                content: 'You are a helpful assistant. ' + (json ? 'Your answer will be formatted as json' : ''),
-            },
-            {
-                role:"assistant",
-                content: " 'ok' ",
-            },
-            ...context,
-        ],
-        max_tokens: 1024,
-    }).on('text', (text) => {
-        callback(text)
-    })
+        return { body: res, context };
+    }
 
-    const chatCompletion = await stream.finalMessage();
-    let res = chatCompletion.content[0] as TextBlock
-    context.push(
-        {
-            role: 'assistant',
-            content: res.text,
-        }
-    );
-    return {
-        body: res.text,
-        context: context,
-    };
-}
+    static async askClaudeStream(
+        prompt: string,
+        callback: (token: string) => void,
+        context: Anthropic.MessageCreateParams["messages"] = [],
+        json = false,
+        model = "claude-3-5-sonnet-20240620"
+    ): Promise<GptResponse> {
+        context.push({ role: "user", content: prompt });
 
+        const stream = this.anthropic.messages.stream({
+            model,
+            messages: [
+                {
+                    role: "user",
+                    content: `You are a helpful assistant. ${json ? "Your answer will be formatted as json" : ""}`,
+                },
+                {
+                    role: "assistant",
+                    content: "'ok'",
+                },
+                ...context,
+            ],
+            max_tokens: 1024,
+        });
 
+        stream.on("text", callback);
 
-export async function generateImage(prompt:string) {
-    const response = await openai.images.generate(
-        {
+        const final = await stream.finalMessage();
+        const res = final.content[0] as TextBlock;
+
+        context.push({ role: "assistant", content: res.text });
+
+        return { body: res.text, context };
+    }
+
+    static async generateImage(prompt: string): Promise<string> {
+        const response = await this.openai.images.generate({
             model: "dall-e-3",
-            prompt: prompt,
+            prompt,
             n: 1,
             size: "1024x1024",
-        }
-    );
+        });
 
-    return response.data[0].url;
+        return response.data[0].url;
+    }
 }

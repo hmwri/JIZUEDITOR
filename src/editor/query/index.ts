@@ -1,4 +1,4 @@
-import {ask, askClaudeStream, askStream, generateImage} from "./gpt";
+import {LLM} from "./gpt";
 import {Envelope, EnvelopeInfo, Scene, Story} from "./types";
 import {generateChangeScenesPrompt, generateMakeEnvelopePrompt, generateMakeStoryPrompt} from "./promptGenerator";
 import {lang_type} from "../config";
@@ -19,7 +19,7 @@ export async function makeStory(task:string,streamingCallback: (story :Story) =>
         }
     }
 
-    let res = await askStream(prompt,callback, [], true)
+    let res = await LLM.askStream(prompt,callback, [], true)
     let story = JSON.parse(res.body) as Story
     story.characters.unshift({
         name: language == "en" ? "Observer" : "鑑賞者",
@@ -31,7 +31,7 @@ export async function getEnvelopeValues(story: Story , envelope: EnvelopeInfo, l
     let prompt = generateMakeEnvelopePrompt(story, envelope, language)
 
     console.log("from: getEnvelopeValues" , prompt)
-    let body = (await ask(prompt, [], true)).body
+    let body = (await LLM.ask(prompt, [], true)).body
     let dict = JSON.parse(body)["result"]
     let points: (number | null)[] = []
     for (let j = 1; j <= story.scenes.length; j++) {
@@ -118,7 +118,7 @@ export async function changeScenes(story: Story ,  envelopes: Envelope[], stream
         }
     }
 
-    let res = await askStream(prompt, callback, [], true)
+    let res = await LLM.askStream(prompt, callback, [], true)
     console.log("from: changeScenes" , prompt)
     console.log(res.body)
     try {
@@ -148,8 +148,8 @@ export async function generateImageFromScene(story:Story, scene_number:number) {
 
     console.log(p)
 
-    let prompt = await ask(p,[],false,"gpt-4o")
-    return await generateImage(prompt.body + " - style:cartoon")
+    let prompt = await LLM.ask(p,[],false,"gpt-4o")
+    return await LLM.generateImage(prompt.body + " - style:cartoon")
 }
 
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key Registration</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>OpenAI API Key</h1>
+    <p>
+        Please enter your OpenAI API key. You can get it from
+        <a href="https://platform.openai.com/account/api-keys">here</a>.
+    </p>
+    <input type="text" id="apikey" placeholder="sk-....">
+    <button onclick="saveApiKey()">Save and Continue</button>
+</div>
+
+<script>
+    function saveApiKey() {
+        var apikey = document.getElementById('apikey').value;
+        sessionStorage.setItem('apikey', apikey);
+        window.location.href = 'editor.html';
+    }
+</script>
+</body>
+</html>

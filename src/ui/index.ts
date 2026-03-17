@@ -81,6 +81,7 @@ export class UIManager {
 
 
     initialize() {
+
         $(".generate_envelope").on("click", () => {
             let min_description = $('input[name="min_description"]').val() as string;
             let max_description = $('input[name="max_description"]').val() as string;
@@ -138,7 +139,7 @@ export class UIManager {
 // ネオトーキョーは平和を取り戻し、玲は新たな研究を続けていく。困難を乗り越えた二人の友情は今後もますます深まるだろう。
 //
 // これをこのまま設定して
-                    `
+  //                  `
 //                 request =
 //                     `
 // 第一章
@@ -194,28 +195,25 @@ export class UIManager {
             syncScroll('#timeline', '.track_descriptions');
 
                 // ポップアップを開く
-                $('#add_envelope_button').click(function() {
-                    $('#popup-background').show();
-                    $('#popup').fadeIn();
-                });
+            const openPopup = (selector: string): void => {
+                $("#popup-background").show();
+                $(selector).fadeIn();
+            };
 
-                // ポップアップを閉じる
-                $('#close-popup, #popup-background').click(function() {
-                    $('#popup').fadeOut();
-                    $('#popup-background').hide();
-                });
+            const closePopup = (selector: string): void => {
+                $(selector).fadeOut();
+                $("#popup-background").hide();
+            };
 
-            // ポップアップを開く
-            $('.set_basic_story_button').click(function() {
-                $('#popup-background').show();
-                $('#popup2').fadeIn();
-            });
+            // ポップアップ開く
+            $("#add_envelope_button").on("click", () => openPopup("#popup"));
+            $(".set_basic_story_button").on("click", () => openPopup("#popup2"));
 
-            // ポップアップを閉じる
-            $('#close-popup2, #popup-background').click(function() {
-                $('#popup2').fadeOut();
-                $('#popup-background').hide();
-            });
+            // ポップアップ閉じる
+            $("#close-popup").on("click", () => closePopup("#popup"));
+            $("#close-popup2").on("click", () => closePopup("#popup2"));
+
+            // ==== APIキー入力ポップアップ ====
 
         });
 

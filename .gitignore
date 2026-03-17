@@ -1,2 +1,5 @@
 src/ignore/*
 node_modules/
+dist/
+.idea/
+
